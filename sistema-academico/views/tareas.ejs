@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tareas pendientes</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <h1>Tareas - <%= personaje %></h1>
+
+    <p>Lista de tareas pendientes y en proceso.</p>
+
+    <ul class="task-list">
+        <% if (tareas && tareas.length) { %>
+            <% tareas.forEach(function(t) { %>
+-                <li><strong><%= t.titulo %></strong> — <%= t.fecha %> — <em><%= t.estado %></em></li>
++                <li class="task-item">
++                    <div class="task-left">
++                        <strong><%= t.titulo %></strong>
++                        <div class="task-meta"><%= t.fecha %></div>
++                    </div>
++                    <div class="task-right"><em><%= t.estado %></em></div>
++                </li>
+            <% }) %>
+        <% } else { %>
+            <li>No hay tareas asignadas.</li>
+        <% } %>
+    </ul>
+
+    <p><a href="/">Volver al inicio</a></p>
+</body>
+</html>

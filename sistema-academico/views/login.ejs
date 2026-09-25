@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inicio de sesion - PLANUTOR</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      font-family: Arial, sans-serif;
+      background: #f7ede2;
+    }
+    .login {
+      width: 100%;
+      max-width: 420px;
+      background: white;
+      padding: 45px;
+      border-radius: 25px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+    }
+    h1 {
+      color: #84a59d;
+      font-size: 42px;
+      margin-bottom: 10px;
+    }
+    h2 {
+      color: #333;
+      margin-bottom: 24px;
+    }
+    .alerta {
+      margin-bottom: 16px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      text-align: left;
+      font-size: 14px;
+    }
+    .alerta.error {
+      background: #fde2e1;
+      color: #8f2d2c;
+    }
+    .alerta.ok {
+      background: #e3f2ed;
+      color: #2f665a;
+    }
+    input {
+      width: 100%;
+      padding: 14px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+    button {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 10px;
+      background: #84a59d;
+      color: white;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .registro {
+      display: block;
+      margin-top: 20px;
+      color: #f28482;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="login">
+    <h1>PLANUTOR</h1>
+    <h2>Iniciar sesion</h2>
+
+    <% if (error) { %>
+      <div class="alerta error"><%= error %></div>
+    <% } %>
+
+    <% if (mensaje) { %>
+      <div class="alerta ok"><%= mensaje %></div>
+    <% } %>
+
+    <form action="/login" method="POST">
+      <input
+        type="email"
+        name="correo"
+        placeholder="Correo electronico"
+        required
+      >
+
+      <input
+        type="password"
+        name="password"
+        placeholder="Contrasena"
+        required
+      >
+
+      <button type="submit">INICIAR SESION</button>
+    </form>
+
+    <a href="/inicio" class="registro">¿Es tu primera vez? Registrarse</a>
+  </div>
+</body>
+</html>

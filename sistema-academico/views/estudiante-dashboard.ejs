@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Muro semanal - PLANUTOR</title>
+  <style>
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family: Arial, sans-serif; background:#f7ede2; color:#2d2d2d; padding:24px; }
+    .contenedor { max-width: 1100px; margin: 0 auto; }
+    .hero, .muro { background:#fff; border-radius:22px; box-shadow:0 10px 30px rgba(0,0,0,0.12); }
+    .hero { padding:28px; margin-bottom:24px; }
+    .muro { padding:24px; }
+    h1 { color:#84a59d; margin-bottom:8px; }
+    p { line-height:1.5; }
+    .alerta { margin-top:16px; padding:12px 14px; border-radius:10px; font-size:14px; }
+    .ok { background:#e3f2ed; color:#2f665a; }
+    .error { background:#fde2e1; color:#8f2d2c; }
+    .acciones { margin-top:18px; display:flex; gap:12px; flex-wrap:wrap; }
+    .acciones a { text-decoration:none; padding:10px 14px; border-radius:10px; background:#84a59d; color:#fff; font-weight:bold; }
+    .lista { display:grid; gap:16px; margin-top:20px; }
+    .tarea { border:1px solid #f0ece7; border-radius:16px; padding:18px; }
+    .meta { display:flex; gap:8px; flex-wrap:wrap; margin:10px 0; }
+    .chip { padding:6px 10px; border-radius:999px; font-size:13px; font-weight:bold; }
+    .materia { background:#fce7d6; color:#945f35; }
+    .profesor { background:#e8eef7; color:#3f5b88; }
+    .pendiente { background:#fff0d8; color:#8f5a00; }
+    .en-proceso { background:#dbeeff; color:#0d5e9f; }
+    .terminado { background:#e3f2ed; color:#2f665a; }
+    .pie { margin-top:14px; display:flex; gap:16px; flex-wrap:wrap; align-items:center; }
+    select { padding:10px 12px; border-radius:10px; border:1px solid #d5cec8; }
+    button { border:none; border-radius:10px; background:#f28482; color:#fff; padding:10px 14px; font-weight:bold; cursor:pointer; }
+    .vacio { color:#6b625b; }
+  </style>
+</head>
+<body>
+  <main class="contenedor">
+    <section class="hero">
+      <h1>Muro semanal de tareas</h1>
+      <section class="buscador-ia">
+  <h2>Asistente IA</h2>
+
+  <p>Haz una pregunta para recibir ayuda con tus estudios.</p>
+
+  <div class="buscador-contenedor">
+    <input
+      type="text"
+      id="preguntaIA"
+      placeholder="¿Qué quieres aprender hoy?"
+      autocomplete="off"
+      onkeydown="if (event.key === 'Enter') buscarConIA()"
+    >
+
+    <button type="button" id="btnIA" onclick="buscarConIA()">
+       Buscar
+    </button>
+  </div>
+
+  <div id="respuestaIA" class="respuesta-ia"></div>
+</section>
+      <p><strong><%= currentUser.nombre %></strong>, aqui ves las tareas publicadas para tu curso en la semana <strong><%= semana.inicio %></strong> a <strong><%= semana.fin %></strong>.</p>
+      <p>Tu curso: <strong>Grado <%= currentUser.grado || '-' %> - Grupo <%= currentUser.grupo || '-' %></strong>.</p>
+      <% if (mensaje) { %><div class="alerta ok"><%= mensaje %></div><% } %>
+      <% if (error) { %><div class="alerta error"><%= error %></div><% } %>
+   <div class="acciones">
+  <a href="/panel/<%= currentUser.id %>">Recargar muro</a>
+
+  <a href="/calendario?personaje=estudiante&usuarioId=<%= currentUser.id %>">
+    Ver calendario
+  </a>
+
+  <a href="/eventos-escolares?usuarioId=<%= currentUser.id %>">
+    Eventos escolares
+  </a>
+
+  <a href="/planeador/<%= currentUser.id %>">
+     Mi Planeador
+  </a>
+
+  <a href="/">
+    Cerrar sesion
+  </a>
+</div>
+    </section>
+
+    <!-- INICIO recordatorios -->
+    <section class="hero" id="recordatorios-box">
+      <h2>Recordatorios</h2>
+      <div id="lista-recordatorios">Cargando recordatorios...</div>
+    </section>
+    <script>
+      fetch('/recordatorios?usuarioId=<%= currentUser.id %>')
+        .then((r) => r.json())
+        .then((data) => {
+          const cont = document.getElementById('lista-recordatorios');
+          const items = data.recordatorios || [];
+          if (items.length === 0) {
+            cont.innerHTML = '<p class="vacio">No tienes tareas próximas por ahora.</p>';
+            return;
+          }
+          cont.innerHTML = items.map((t) =>
+            `<p> <strong>${t.titulo}</strong> (${t.materia}) vence el ${t.fecha_entrega}</p>`
+          ).join('');
+        })
+        .catch(() => {
+          document.getElementById('lista-recordatorios').innerHTML = '<p class="vacio">No fue posible cargar los recordatorios.</p>';
+        });
+    </script>
+    <!-- FIN recordatorios -->
+
+    <section class="muro">
+      <h2>Tareas de la semana</h2>
+      <% if (tareas.length === 0) { %>
+        <p class="vacio">No hay tareas publicadas para tu grado y grupo esta semana.</p>
+      <% } else { %>
+        <div class="lista">
+          <% tareas.forEach((tarea) => { %>
+            <article class="tarea">
+              <h3><%= tarea.titulo %></h3>
+              <div class="meta">
+                <span class="chip materia">Grado <%= tarea.grado %> - Grupo <%= tarea.grupo %></span>
+                <span class="chip materia"><%= tarea.materia %></span>
+                <span class="chip profesor">Profesor: <%= tarea.profesor_nombre %></span>
+                <span class="chip <%= tarea.estado.replace(' ', '-') %>"><%= tarea.estado %></span>
+              </div>
+              <p><%= tarea.descripcion %></p>
+              <div class="pie">
+                <span><strong>Entrega:</strong> <%= tarea.fecha_entrega %></span>
+                <form action="/estudiante/tareas/<%= tarea.id %>/estado" method="POST">
+                  <input type="hidden" name="estudianteId" value="<%= currentUser.id %>">
+                  <select name="estado">
+                    <option value="pendiente" <%= tarea.estado === 'pendiente' ? 'selected' : '' %>>Pendiente</option>
+                    <option value="en proceso" <%= tarea.estado === 'en proceso' ? 'selected' : '' %>>En proceso</option>
+                    <option value="terminado" <%= tarea.estado === 'terminado' ? 'selected' : '' %>>Terminado</option>
+                  </select>
+                  <button type="submit">Guardar estado</button>
+                </form>
+              </div>
+            </article>
+          <% }) %>
+        </div>
+      <% } %>
+    </section>
+  </main>
+  <script>
+  async function buscarConIA() {
+    const campo = document.getElementById("preguntaIA");
+    const boton = document.getElementById("btnIA");
+    const respuesta = document.getElementById("respuestaIA");
+
+    const pregunta = campo.value.trim();
+
+    if (!pregunta) {
+      respuesta.textContent = "Escribe una pregunta primero.";
+      return;
+    }
+
+    // Bloquea el boton para no enviar dos veces la misma pregunta
+    boton.disabled = true;
+    boton.textContent = "Pensando...";
+    respuesta.textContent = "La IA esta pensando...";
+
+    try {
+      const resultado = await fetch("/ia/preguntar", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ pregunta: pregunta })
+      });
+
+      let datos = {};
+
+      try {
+        datos = await resultado.json();
+      } catch (e) {
+        datos = {};
+      }
+
+      if (datos.error) {
+        respuesta.textContent = "⚠️ " + datos.error;
+      } else if (datos.respuesta) {
+        // white-space: pre-wrap conserva los saltos de linea de la IA
+        respuesta.style.whiteSpace = "pre-wrap";
+        respuesta.textContent = datos.respuesta;
+      } else {
+        respuesta.textContent =
+          " La IA no devolvio respuesta (codigo " + resultado.status + ").";
+      }
+    } catch (error) {
+      console.error(error);
+      respuesta.textContent =
+        " No se pudo conectar con el servidor. Verifica que este encendido.";
+    } finally {
+      boton.disabled = false;
+      boton.textContent = "🔍 Buscar";
+    }
+  }
+</script>
+</body>
+
+</html>

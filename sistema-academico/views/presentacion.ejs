@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presentación Personal</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <h1>Presentación - <%= personaje %></h1>
+
+    <section>
+        <h2><%= perfil.nombre %></h2>
+        <% if (perfil.cargo) { %>
+            <p><strong>Cargo:</strong> <%= perfil.cargo %></p>
+        <% } %>
+        <% if (perfil.grado) { %>
+            <p><strong>Grado:</strong> <%= perfil.grado %></p>
+        <% } %>
+        <p><%= perfil.descripcion %></p>
+    </section>
+
+    <p><a href="/">Volver al inicio</a></p>
+</body>
+</html>

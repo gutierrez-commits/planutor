@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PLANUTOR</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f7ede2;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+    }
+    .contenedor {
+      background-color: white;
+      width: 100%;
+      max-width: 520px;
+      padding: 50px;
+      border-radius: 20px;
+      text-align: center;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+    }
+    h1 {
+      color: #84a59d;
+      font-size: 45px;
+      margin-bottom: 15px;
+    }
+    p {
+      color: #555;
+      font-size: 20px;
+      margin-bottom: 35px;
+    }
+    h2 {
+      margin-bottom: 25px;
+      color: #333;
+    }
+    label {
+      display: block;
+      text-align: left;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 8px;
+    }
+    select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+      margin-bottom: 15px;
+    }
+    .campo-colegio {
+      position: relative;
+      margin-bottom: 15px;
+    }
+    .campo-colegio input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    .opciones-colegio {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border: 1px solid #ccc;
+      border-top: none;
+      border-radius: 0 0 8px 8px;
+      max-height: 220px;
+      overflow-y: auto;
+      z-index: 10;
+      text-align: left;
+    }
+    .opcion-colegio {
+      padding: 10px 12px;
+      cursor: pointer;
+      font-size: 15px;
+    }
+    .opcion-colegio:hover {
+      background: #f7ede2;
+    }
+    .opcion-otro {
+      color: #f28482;
+      font-style: italic;
+    }
+    .aviso {
+      text-align: left;
+      color: #8f2d2c;
+      background: #fde2e1;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 20px;
+      display: none;
+    }
+    .aviso.visible { display: block; }
+    .boton {
+      display: block;
+      width: 100%;
+      padding: 18px;
+      margin: 15px 0;
+      border-radius: 12px;
+      text-decoration: none;
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+      opacity: 0.55;
+      pointer-events: none;
+    }
+    .boton.habilitado {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .profesor { background-color: #f28482; }
+    .estudiante { background-color: #84a59d; }
+  </style>
+</head>
+<body>
+  <div class="contenedor">
+    <h1>PLANUTOR</h1>
+    <p>Organiza tu vida academica de manera sencilla.</p>
+
+    <label for="institucionBusqueda">¿Cual es tu institucion?</label>
+    <div class="campo-colegio">
+      <input type="text" id="institucionBusqueda" placeholder="Escribe el nombre de tu colegio..." autocomplete="off">
+      <div class="opciones-colegio" id="institucionOpciones"></div>
+    </div>
+    <input type="hidden" id="institucion" value="">
+
+    <p class="aviso" id="avisoInstitucion">Selecciona tu institucion para continuar.</p>
+
+    <h2>¿Quien eres?</h2>
+    <a href="#" id="linkProfesor" class="boton profesor">Soy profesor</a>
+    <a href="#" id="linkEstudiante" class="boton estudiante">Soy estudiante</a>
+  </div>
+
+  <script src="/js/colegios.js"></script>
+  <script>
+    const hidden = document.getElementById('institucion');
+    const aviso = document.getElementById('avisoInstitucion');
+    const linkProfesor = document.getElementById('linkProfesor');
+    const linkEstudiante = document.getElementById('linkEstudiante');
+
+    function actualizarBotones() {
+      const institucion = encodeURIComponent(hidden.value);
+      const habilitado = hidden.value !== '';
+
+      linkProfesor.classList.toggle('habilitado', habilitado);
+      linkEstudiante.classList.toggle('habilitado', habilitado);
+
+      linkProfesor.href = habilitado ? ('/codigo-profesor?institucion=' + institucion) : '#';
+      linkEstudiante.href = habilitado ? ('/registro-estudiante?institucion=' + institucion) : '#';
+    }
+
+    function manejarClicSinInstitucion(evento) {
+      if (hidden.value === '') {
+        evento.preventDefault();
+        aviso.classList.add('visible');
+      }
+    }
+
+    initAutocompleteColegio({
+      inputId: 'institucionBusqueda',
+      hiddenId: 'institucion',
+      listId: 'institucionOpciones',
+      onSeleccion: () => {
+        aviso.classList.remove('visible');
+        actualizarBotones();
+      }
+    });
+
+    linkProfesor.addEventListener('click', manejarClicSinInstitucion);
+    linkEstudiante.addEventListener('click', manejarClicSinInstitucion);
+
+    actualizarBotones();
+  </script>
+</body>
+</html>

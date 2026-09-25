@@ -1,0 +1,23 @@
+{
+  "name": "sistema-academico",
+  "version": "1.0.0",
+  "description": "Prototipo de PLANUTOR con Express, EJS y SQLite",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "node --watch app.js",
+    "test": "echo \"Sin pruebas automatizadas\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "dotenv": "^17.4.2",
+    "ejs": "^6.0.1",
+    "express": "^5.2.1",
+    "openai": "^7.15.0",
+    "sqlite3": "^5.1.7"
+  }
+}

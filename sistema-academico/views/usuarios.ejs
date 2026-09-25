@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Usuarios registrados - PLANUTOR</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7ede2;
+      color: #2d2d2d;
+      padding: 24px;
+    }
+    .contenedor {
+      max-width: 980px;
+      margin: 0 auto;
+    }
+    .encabezado {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+      margin-bottom: 24px;
+    }
+    h1 { color: #84a59d; margin-bottom: 8px; }
+    p { line-height: 1.5; }
+    .alerta {
+      margin-top: 16px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 14px;
+    }
+    .alerta.error {
+      background: #fde2e1;
+      color: #8f2d2c;
+    }
+    .alerta.ok {
+      background: #e3f2ed;
+      color: #2f665a;
+    }
+    .tabla {
+      width: 100%;
+      border-collapse: collapse;
+      background: #ffffff;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+    }
+    th, td {
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 1px solid #f0ece7;
+    }
+    th {
+      background: #84a59d;
+      color: white;
+    }
+    tr:last-child td {
+      border-bottom: none;
+    }
+    .vacio {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+    }
+    .acciones {
+      margin-top: 18px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .acciones a {
+      text-decoration: none;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: #f28482;
+      color: #fff;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <main class="contenedor">
+    <section class="encabezado">
+      <h1>Usuarios registrados</h1>
+      <p>Panel administrativo para revisar los usuarios registrados y sus cursos asignados.</p>
+
+      <% if (currentUser) { %>
+        <p><strong>Usuario actual:</strong> <%= currentUser.nombre %> (<%= currentUser.rol %>)</p>
+      <% } %>
+
+      <% if (mensaje) { %>
+        <div class="alerta ok"><%= mensaje %></div>
+      <% } %>
+
+      <% if (error) { %>
+        <div class="alerta error"><%= error %></div>
+      <% } %>
+
+      <div class="acciones">
+        <% if (currentUser) { %>
+          <a href="/panel/<%= currentUser.id %>">Recargar panel</a>
+        <% } else { %>
+          <a href="/">Ir al login</a>
+        <% } %>
+        <a href="/inicio">Registrar otra cuenta</a>
+      </div>
+    </section>
+
+    <% if (usuarios.length === 0) { %>
+      <section class="vacio">
+        <p>No hay usuarios registrados todavia.</p>
+      </section>
+    <% } else { %>
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Correo</th>
+            <th>Rol</th>
+            <th>Nivel</th>
+            <th>Grado</th>
+            <th>Grupo</th>
+            <th>Creado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% usuarios.forEach((usuario) => { %>
+            <tr>
+              <td><%= usuario.nombre %></td>
+              <td><%= usuario.correo %></td>
+              <td><%= usuario.rol %></td>
+              <td><%= usuario.nivel || '-' %></td>
+              <td><%= usuario.grado || '-' %></td>
+              <td><%= usuario.grupo || '-' %></td>
+              <td><%= usuario.creado_en %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } %>
+  </main>
+</body>
+</html>

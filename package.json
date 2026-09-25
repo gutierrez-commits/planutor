@@ -1,0 +1,11 @@
+{
+  "name": "proyecto-grado-planutor",
+  "private": true,
+  "description": "Punto de arranque raiz para PLANUTOR",
+  "scripts": {
+    "start": "npm --prefix sistema-academico start",
+    "dev": "npm --prefix sistema-academico run dev",
+    "test": "npm --prefix sistema-academico test",
+    "install:app": "npm --prefix sistema-academico install"
+  }
+}

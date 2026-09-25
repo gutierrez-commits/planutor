@@ -1,0 +1,6 @@
+node_modules/
+node_modules
+sistema-academico/node_modules/
+sistema-academico/data/*.sqlite
+sistema-academico/data/*.sqlite-*
+sistema-academico/.env
